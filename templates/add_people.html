@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+ 
+{% block content %}
+    <h1>Добавление экскурсовода</h1>
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.peoplename.label }}<br>
+            {{ form.peoplename }}<br>
+            {% for error in form.peoplename.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.peoplerfid.label }}<br>
+            {{ form.peoplerfid }}<br>
+            {% for error in form.peoplerfid.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+{% endblock %}

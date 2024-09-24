@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% if type == 1 %}
+        <h1>Список экскурсий</h1>
+        <form action="" method="post" novalidate>
+            <div class="alert alert-light" role="alert">
+                <a class="btn btn-primary" href="/add_event">Добавить экскурсию</a>
+                <a class="btn btn-primary" href="/update_event">Обновить данные из таблицы</a>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                      <th scope="col">Тип</th>
+                      <th scope="col">Дата</th>
+                      <th scope="col">Время</th>
+                      <th scope="col">ФИО заказчика</th>
+                      <th scope="col">Класс</th>
+                      <th scope="col">Колличество детей</th>
+                      <th scope="col">Есть ли список</th>
+                      <th scope="col">Прошла ли оплата</th>
+                      <th scope="col">Комментарий</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in data %}
+                        <tr>
+                            {% for i in range(9) %}
+                              <td>{{item[i+1]}}</td>
+                            {% endfor %}
+                            <td><a class="btn btn-primary" href="/delete_event/{{item[0]}}">Удалить экскурсию</a></td>
+                            <td><a class="btn btn-primary" href="/edit_event/{{item[0]}}">Редактировать экскурсию</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
+    {% endif %}
+     {% if type == 2 %}
+        <h1>Список экскурсоводов</h1>
+        <form action="" method="post" novalidate>
+            <div class="alert alert-light" role="alert">
+                <a class="btn btn-primary" href="/add_people">Добавить экскурсовода</a>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                      <th scope="col">Имя</th>
+                      <th scope="col">Индекс</th>
+                      <th scope="col">Колличество экскурсий за всё время</th>
+                      <th scope="col">Колличество неоплаченных экскурсий</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in data %}
+                        <tr>
+                            {% for i in range(4) %}
+                              <td>{{item[i+1]}}</td>
+                            {% endfor %}
+                            <td><a class="btn btn-primary" href="/delete_duty/{{item[0]}}">Заплатить долг</a></td>
+                            <td><a class="btn btn-primary" href="/delete_people/{{item[0]}}">Удалить экскурсовода</a></td>
+                            <td><a class="btn btn-primary" href="/edit_people/{{item[0]}}">Редактировать экскурсовода</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+ 
+{% block content %}
+    <h1>Добавление экскурсии</h1>
+    <form action="" method="post" novalidate>
+        <table class="table">
+                <thead>
+                    <tr>
+                      <th scope="col">Тип</th>
+                      <th scope="col">Дата</th>
+                      <th scope="col">Время</th>
+                      <th scope="col">ФИО заказчика</th>
+                      <th scope="col">Номер заказчика</th>
+                      <th scope="col">Класс</th>
+                      <th scope="col">Колличество детей</th>
+                      <th scope="col">Есть ли список</th>
+                      <th scope="col">Прошла ли оплата</th>
+                      <th scope="col">Комментарий</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        <tr>
+                            <td>
+                                {{data[1]}}
+                            </td>
+                            <td>
+                                <input type="date" class="form-control" name="event_date" value={{data[2]}} disabled>
+                            </td>
+                            <td>
+                                <input type="time" name="event_time" value={{data[3]}} disabled />
+                            </td>
+                            <td>
+                                <input type="text" name="event_user" size="5" value={{data[4]}}/>
+                            </td>
+                            <td>
+                                <input type="tel" name="event_user_tel" size="8" value={{data[5]}}/>
+                            </td>
+                            <td>
+                                <input type="text" name="event_grade" size="1" value={{data[6]}}/>
+                            </td>
+                            <td>
+                                <input type="text" name="event_pupil_number" size="1" value={{data[7]}} />
+                            </td>
+                            <td>
+                                <select name="event_get_list">
+                                    <option value="Да" selected> Да </option>
+                                    <option value="Нет"> Нет </option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" name="event_get_payment" size="1" value={{data[9]}}/>
+                            </td>
+                            <td>
+                                <input type="text" name="event_comment" value={{data[10]}} />
+                            </td>
+                        </tr>
+                </tbody>
+        </table>
+        <input type="submit" value="Редактировать" />
+    </form>
+
+
+{% endblock %}
