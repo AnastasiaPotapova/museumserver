@@ -3,7 +3,7 @@ from googleapiclient.discovery import build
 from datetime import datetime, timedelta, timezone
 
 # 1. Настроить учетные данные (скачайте JSON-файл учетных данных из Google Cloud Console)
-SERVICE_ACCOUNT_FILE = 'museum-vk-bot-c31fb937a060.json'
+SERVICE_ACCOUNT_FILE = 'museum-vk-bot-ce02c57d683b.json'
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 
 credentials = service_account.Credentials.from_service_account_file(
@@ -50,7 +50,7 @@ def get_from_calendar():
     time_min = now.isoformat() + 'Z'
     print(time_min, time_max)
     # 4. Получаем события за последнюю неделю
-    events_result = service.events().list(calendarId='tassiiyya@gmail.com', timeMin=time_min, timeMax=time_max,
+    events_result = service.events().list(calendarId='7b1561e0938ce1f98aa164640148e7b8f541c95dec8a9dedf8de9a3045426463@group.calendar.google.com', timeMin=time_min, timeMax=time_max,
                                           singleEvents=True, orderBy='startTime').execute()
     events = events_result.get('items', [])
 
