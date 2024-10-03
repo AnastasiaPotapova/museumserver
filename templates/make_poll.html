@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+        <h1>Создание опроса</h1>
+        <form action="" method="post" novalidate>
+            <table class="table">
+                <thead>
+                    <tr>
+                      <th scope="col">Тип</th>
+                      <th scope="col">Дата</th>
+                      <th scope="col">Время</th>
+                      <th scope="col">ФИО заказчика</th>
+                      <th scope="col">Класс</th>
+                      <th scope="col">Колличество детей</th>
+                      <th scope="col">Есть ли список</th>
+                      <th scope="col">Прошла ли оплата</th>
+                      <th scope="col">Комментарий</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in data %}
+                        <tr>
+                            {% for i in range(9) %}
+                              <td>{{item[i+1]}}</td>
+                            {% endfor %}
+                            <td>
+                                <input type="checkbox" class="btn-check" id="{{item[0]}}" name="{{item[0]}}" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="{{item[0]}}">Добавить в опрос</label>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <input class="btn btn-primary" type="submit" value="Отправить в беседу" />
+        </form>
+
+{% endblock %}

@@ -3,44 +3,61 @@ from telebot import types
 from threading import Thread, Timer
 from datetime import datetime
 import time
+from calend import update_event_from_calendar
 
 botTimeWeb = telebot.TeleBot('7148422286:AAGlA84bt50tlz2sOfciv4xfRka5hR5rJB4')
+
+a = types.InputPollOption('yes')
+b = types.InputPollOption('no')
+options = [a, b]
+dt = 0
 
 
 @botTimeWeb.message_handler(commands=['start'])
 def startBot(message):
-    a = types.InputPollOption('yes')
-    b = types.InputPollOption('no')
-    botTimeWeb.send_poll(message.chat.id, 'What would you choose?', [a, b], False, allows_multiple_answers=True, message_thread_id=2)
     print(message.chat.id)
 
 
-@botTimeWeb.message_handler(func=lambda message: True)
-def echo_message(message):
-    botTimeWeb.reply_to(message, message.text)
+votes = {}
+@botTimeWeb.poll_answer_handler()
+def handle_poll_answer(poll_answer):
+    user_id = poll_answer.user.id
+    user_name = poll_answer.user.username
+    option_ids = poll_answer.option_ids
+    selected_options = [options[i].text for i in option_ids]
+    votes[user_id] = [selected_options, user_name]
 
 
-def send_poll_ex():
-    a = types.InputPollOption('yes')
-    b = types.InputPollOption('no')
-    botTimeWeb.send_poll(-1002183010951, 'What would you choose?', [a, b], False, allows_multiple_answers=True,
+def make_tg_poll(poll_ans):
+    poll = botTimeWeb.send_poll(-1002183010951, 'Экскурсии недели', poll_ans, False, allows_multiple_answers=True,
                          message_thread_id=2)
 
 
-Thread(target=botTimeWeb.infinity_polling).start()
+def print_all_votes():
+    for user, options in votes.items():
+        mention = "[@" + options[1] + "](tg://user?id=" + str(user) + ")"
+        response = f"Hi, {mention}, {options[0]}"
+
+        botTimeWeb.send_message(chat_id=-1002183010951, text=response, parse_mode="Markdown", message_thread_id=2)
 
 
-def run_once_at_time(target_date, target_time):
+def reminder(target_date, target_time):
     while True:
         current_time = datetime.now().strftime("%H:%M")
-        current_date = datetime.now().date()
+        current_date = str(datetime.now().date())
         if current_time == target_time and current_date == target_date:
-            send_poll_ex()
-            break
-        time.sleep(30)
+            print_all_votes()
+        time.sleep(60)
 
 
-# Установите время в формате 'ЧЧ:ММ'
-target_time = "20:17"  # Например, 15:30
-target_date = "2024-08-29"
-Thread(target=run_once_at_time, args=(target_time, target_date)).start()
+def check_poll_ans():
+    pass
+
+
+Thread(target=botTimeWeb.infinity_polling).start()
+reminder_time = "18:00"
+check_ans_time = "23:59"
+make_tg_poll(['1', '2', '3'])
+target_date = "2024-10-03"
+target_time = "13:52"
+Thread(target=reminder, args=(target_date, target_time)).start()

@@ -2,7 +2,7 @@ from flask import Flask, render_template, redirect, request, jsonify
 from add_news import AddEventForm, AddPeopleForm, EditPeopleForm
 from db import PeopleModel, EventModel, DB
 from calend import send_to_calendar, update_event_from_calendar
-from logic import send_poll_ex
+from logic import make_tg_poll
 import json
 
 app = Flask(__name__)
@@ -50,7 +50,7 @@ def add_event():
         nm.insert(etype, date, time, user, grade, pupil_number, get_list, get_payment, comment)
         send_to_calendar(etype, date, time, user, grade, pupil_number, get_list, get_payment, comment)
         return redirect("/events")
-    return render_template('add_event.html', title='Добавление Экскурсии', data="Vova")
+    return render_template('add_event.html', title='Добавление Экскурсии')
 
 
 @app.route('/edit_event/<int:event_id>', methods=['GET', 'POST'])
@@ -142,7 +142,25 @@ def check():
     return jsonify({'task': 'good'}), 201
 
 
+@app.route('/make_poll', methods=['GET', 'POST'])
+def make_poll():
+    exmod = EventModel(db.get_connection())
+    excursions = exmod.get_all()
+    poll_ans = []
+    if request.method == 'POST':
+        for i in list(request.form):
+            dt = exmod.get(i)
+            poll_ans.append(' '.join([str(dt[1]), str(dt[2])[-5:], str(dt[3])[:5]]))
+        make_tg_poll(poll_ans)
+        return redirect("/events")
+    return render_template('make_poll.html', data=excursions)
+
+
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
-if __name__ == '__main__':
+
+def run_server():
     app.run(port=5738, host='0.0.0.0')
+
+
+run_server()

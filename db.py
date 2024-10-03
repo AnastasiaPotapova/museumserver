@@ -37,13 +37,13 @@ class PeopleModel:
 
     def delete(self, user_id):
         cursor = self.connection.cursor()
-        cursor.execute('''DELETE FROM users WHERE id = ?''', (str(user_id)))
+        cursor.execute('''DELETE FROM users WHERE id = ?''', (str(user_id), ))
         cursor.close()
         self.connection.commit()
 
     def get(self, user_id):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM users WHERE id = ?", (str(user_id)))
+        cursor.execute("SELECT * FROM users WHERE id = ?", (str(user_id), ))
         row = cursor.fetchone()
         return row
 
