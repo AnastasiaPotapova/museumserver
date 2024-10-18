@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, request, jsonify
 from add_news import AddEventForm, AddPeopleForm, EditPeopleForm
-from db import PeopleModel, EventModel, DB
+from db import PeopleModel, EventModel, db
 from calend import send_to_calendar, update_event_from_calendar
 from logic import make_tg_poll
 import json
@@ -15,8 +15,6 @@ app.config.update(dict(
     MAIL_USERNAME='nast-pota@ya.ru',
     MAIL_PASSWORD='gjnfgjdf10',
 ))
-
-db = DB()
 
 
 @app.route('/')
@@ -116,18 +114,19 @@ def update_event():
     return redirect("/events")
 
 
-@app.route('/edit_people/<int:people_id>', methods=['GET', 'POST'])
-def edit_people(people_id):
-    form = EditPeopleForm()
+@app.route('/edit_people/<int:user_id>', methods=['GET', 'POST'])
+def edit_people(user_id):
     nm = PeopleModel(db.get_connection())
-    people = nm.get(people_id)
-    if form.validate_on_submit():
-        name = form.peoplename.data
+    user = nm.get(user_id)
+    if request.method == 'POST':
+        user_name = request.form["user_name"]
+        number_events = request.form["number_events"]
+        duty = request.form["duty"]
         nm = PeopleModel(db.get_connection())
-        nm.edit(people_id, name)
-        return redirect("/people")
-    return render_template('edit_people.html', title='Редактирование Экскурсии',
-                           form=form)
+        nm.edit(user_id, user_name, number_events, duty)
+        return redirect("/events")
+    return render_template('edit_people.html', title='Редактирование Экскурсовода',
+                           data=user)
 
 
 @app.route('/check', methods=['POST'])
@@ -150,7 +149,7 @@ def make_poll():
     if request.method == 'POST':
         for i in list(request.form):
             dt = exmod.get(i)
-            poll_ans.append(' '.join([str(dt[1]), str(dt[2])[-5:], str(dt[3])[:5]]))
+            poll_ans.append([dt[0], ' '.join([str(dt[1]), str(dt[2])[-5:], str(dt[3])[:5]])])
         make_tg_poll(poll_ans)
         return redirect("/events")
     return render_template('make_poll.html', data=excursions)

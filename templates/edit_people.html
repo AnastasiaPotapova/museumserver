@@ -1,19 +1,36 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="container mt-5">
-        <h1>Редактирование экскурсовода</h1>
-        <form action="" method="post" novalidate>
-            {{ form.hidden_tag() }}
-            <div class="mb-3">
-                {{ form.peoplename.label(class="form-label") }}
-            </div>
-            <div class="mb-3">
-                {{ form.peoplename(class="form-control" ) }}
-            </div>
-            <div class="mb-3">
-                {{ form.submit(class="btn btn-primary") }}
-            </div>
-        </form>
-    </div>
+    <h1>Добавление экскурсии</h1>
+    <form action="" method="post" novalidate>
+        <table class="table">
+                <thead>
+                    <tr>
+                      <th scope="col">Имя</th>
+                      <th scope="col">Карта Политеха</th>
+                      <th scope="col">Колличество экскурсий за всё время</th>
+                      <th scope="col">Колличество неоплаченных экскурсий</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        <tr>
+                            <td>
+                                <input type="text" name="user_name" size="5" value="{{data[1]}}" />
+                            </td>
+                            <td>
+                                {{data[2]}}
+                            </td>
+                            <td>
+                                <input type="text" name="number_events" size="1" value="{{data[3]}}" />
+                            </td>
+                            <td>
+                                <input type="text" name="duty" size="1" value="{{data[4]}}" />
+                            </td>
+                        </tr>
+                </tbody>
+        </table>
+        <input type="submit" value="Редактировать" />
+    </form>
+
+
 {% endblock %}

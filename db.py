@@ -27,6 +27,12 @@ class PeopleModel:
         cursor.close()
         self.connection.commit()
 
+    def add_column(self, name):
+        cursor = self.connection.cursor()
+        cursor.execute(f'''ALTER TABLE users ADD COLUMN {name} INT(100)''')
+        cursor.close()
+        self.connection.commit()
+
     def insert(self, rfid, user_name="none"):
         cursor = self.connection.cursor()
         cursor.execute('''INSERT INTO users 
@@ -79,13 +85,13 @@ class PeopleModel:
         cursor.close()
         self.connection.commit()
 
-    def edit(self, user_id, user_name):
+    def edit(self, user_id, user_name, number_events, duty):
         cursor = self.connection.cursor()
         cursor.execute('''
             UPDATE users
-                SET user_name = ?
+                SET user_name = ?, number_events = ?, duty = ?
             WHERE id = ?;
-        ''', (user_name, user_id))
+        ''', (user_name, number_events, duty, user_id))
         cursor.close()
         self.connection.commit()
 
@@ -114,6 +120,12 @@ class EventModel:
                                      get_payment INT(2),
                                      comment VARCHAR(1000)
                                      )''')
+        cursor.close()
+        self.connection.commit()
+
+    def add_column(self, name):
+        cursor = self.connection.cursor()
+        cursor.execute(f'''ALTER TABLE events ADD COLUMN {name} INT(100)''')
         cursor.close()
         self.connection.commit()
 
@@ -158,3 +170,142 @@ class EventModel:
         cursor.execute("SELECT * FROM events WHERE id = ?", (str(event_id), ))
         row = cursor.fetchone()
         return row
+
+
+class VisitModel:
+    def __init__(self, connection):
+        self.connection = connection
+        cursor = self.connection.cursor()
+        cursor.execute('''CREATE TABLE IF NOT EXISTS visits 
+                                    (id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                                     poll_id INT(100),
+                                     is_visited INT(100),
+                                     user_id INT(100),
+                                     event_id INT(100),
+                                     vote_id INT(100), 
+                                     username VARCHAR(100)
+                                     )''')
+        cursor.close()
+        self.connection.commit()
+
+    def insert(self, poll_id, event_id, vote_id):
+        cursor = self.connection.cursor()
+        cursor.execute('''INSERT INTO visits 
+                          (poll_id, event_id, is_visited, vote_id) 
+                          VALUES (?,?,?,?)''', (poll_id, event_id, 0, vote_id))
+        cursor.close()
+        self.connection.commit()
+
+    def set_user(self, user_id, username, visit_id):
+        cursor = self.connection.cursor()
+        cursor.execute('''
+                    UPDATE visits
+                        SET user_id = ?, username = ?
+                    WHERE id = ?;
+                ''', (str(user_id), username, str(visit_id)))
+        cursor.close()
+        self.connection.commit()
+
+    def delete(self, visit_id):
+        cursor = self.connection.cursor()
+        cursor.execute('''DELETE FROM visits WHERE id = ?''', (str(visit_id), ))
+        cursor.close()
+        self.connection.commit()
+
+    def get(self, visit_id):
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT * FROM visits WHERE id = ?", (str(visit_id), ))
+        row = cursor.fetchone()
+        return row
+
+    def get_by_user_id(self, user_id):
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT * FROM visits WHERE user_id = ?", (str(user_id), ))
+        rows = cursor.fetchall()
+        return rows
+
+    def get_by_event_id(self, event_id):
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT * FROM visits WHERE event_id = ?", (str(event_id), ))
+        rows = cursor.fetchall()
+        return rows
+
+    def get_vote(self, poll_id, vote_id):
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT * FROM visits WHERE poll_id = ? and vote_id = ?", (str(poll_id), str(vote_id)))
+        rows = cursor.fetchone()
+        return rows
+
+    def get_all(self):
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT * FROM visits")
+        rows = cursor.fetchall()
+        return rows
+
+    def set_visited(self, id):
+        cursor = self.connection.cursor()
+        cursor.execute('''
+                    UPDATE visits
+                        SET is_visited = 1
+                    WHERE id = ?;
+                ''', (str(id), ))
+        cursor.close()
+        self.connection.commit()
+
+
+class PollModel:
+    def __init__(self, connection):
+        self.connection = connection
+        cursor = self.connection.cursor()
+        cursor.execute('''CREATE TABLE IF NOT EXISTS polls 
+                                    (id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                                     tg_id INT(100),
+                                     actual INT(100)
+                                     )''')
+        cursor.close()
+        self.connection.commit()
+
+    def insert(self, tg_id):
+        cursor = self.connection.cursor()
+        cursor.execute('''INSERT INTO polls 
+                          (tg_id, actual) 
+                          VALUES (?,?)''', (tg_id, 1))
+        cursor.close()
+        self.connection.commit()
+
+    def delete(self, poll_id):
+        cursor = self.connection.cursor()
+        cursor.execute('''DELETE FROM polls WHERE id = ?''', (str(poll_id), ))
+        cursor.close()
+        self.connection.commit()
+
+    def get(self, poll_id):
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT * FROM polls WHERE id = ?", (str(poll_id), ))
+        row = cursor.fetchone()
+        return row
+
+    def get_by_tg_id(self, tg_id):
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT * FROM polls WHERE tg_id = ?", (str(tg_id), ))
+        rows = cursor.fetchall()
+        return rows
+
+    def get_all(self):
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT * FROM polls")
+        rows = cursor.fetchall()
+        return rows
+
+    def remove_actual(self, id):
+        cursor = self.connection.cursor()
+        cursor.execute('''
+                    UPDATE polls
+                        SET actual = 0
+                    WHERE id = ?;
+                ''', (str(id), ))
+        cursor.close()
+        self.connection.commit()
+
+
+db = DB()
