@@ -4,13 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a30dc0dc-db75-4319-8f48-44d4bac2fed9" name="Changes" comment="починила token">
+    <list default="true" id="a30dc0dc-db75-4319-8f48-44d4bac2fed9" name="Changes" comment="редактирование экскурсоводов">
+      <change afterPath="$PROJECT_DIR$/templates/people.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.py" beforeDir="false" afterPath="$PROJECT_DIR$/db.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logic.py" beforeDir="false" afterPath="$PROJECT_DIR$/logic.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/news.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/chain.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/chain.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/edit_event.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/edit_event.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/edit_people.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/edit_people.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -99,7 +101,15 @@
       <option name="project" value="LOCAL" />
       <updated>1727900207595</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="редактирование экскурсоводов">
+      <option name="closed" value="true" />
+      <created>1729244931066</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1729244931066</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -117,6 +127,7 @@
     <MESSAGE value="first commit" />
     <MESSAGE value="починила недостатки" />
     <MESSAGE value="починила token" />
-    <option name="LAST_COMMIT_MESSAGE" value="починила token" />
+    <MESSAGE value="редактирование экскурсоводов" />
+    <option name="LAST_COMMIT_MESSAGE" value="редактирование экскурсоводов" />
   </component>
 </project>

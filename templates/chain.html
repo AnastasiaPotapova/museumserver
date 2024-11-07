@@ -4,10 +4,10 @@
     {% if type == 1 %}
         <h1>Список экскурсий</h1>
         <form action="" method="post" novalidate>
-            <div class="alert alert-light" role="alert">
-                <a class="btn btn-primary" href="/add_event">Добавить экскурсию</a>
-                <a class="btn btn-primary" href="/update_event">Обновить данные из таблицы</a>
-                <a class="btn btn-primary" href="/make_poll">Сделать опрос</a>
+            <div class="alert">
+                <a class="btn" href="/add_event">Добавить экскурсию</a>
+                <a class="btn" href="/update_event">Обновить данные из таблицы</a>
+                <a class="btn" href="/make_poll">Сделать опрос</a>
             </div>
             <table class="table">
                 <thead>
@@ -29,8 +29,8 @@
                             {% for i in range(9) %}
                               <td>{{item[i+1]}}</td>
                             {% endfor %}
-                            <td><a class="btn btn-primary" href="/delete_event/{{item[0]}}">Удалить экскурсию</a></td>
-                            <td><a class="btn btn-primary" href="/edit_event/{{item[0]}}">Редактировать экскурсию</a></td>
+                            <td><a class="btn" href="/delete_event/{{item[0]}}">Удалить экскурсию</a></td>
+                            <td><a class="btn" href="/edit_event/{{item[0]}}">Редактировать экскурсию</a></td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -41,7 +41,7 @@
         <h1>Список экскурсоводов</h1>
         <form action="" method="post" novalidate>
             <div class="alert alert-light" role="alert">
-                <a class="btn btn-primary" href="/add_people">Добавить экскурсовода</a>
+                <a class="btn" href="/add_people">Добавить экскурсовода</a>
             </div>
             <table class="table">
                 <thead>
@@ -58,9 +58,8 @@
                             {% for i in range(4) %}
                               <td>{{item[i+1]}}</td>
                             {% endfor %}
-                            <td><a class="btn btn-primary" href="/delete_duty/{{item[0]}}">Заплатить долг</a></td>
-                            <td><a class="btn btn-primary" href="/delete_people/{{item[0]}}">Удалить экскурсовода</a></td>
-                            <td><a class="btn btn-primary" href="/edit_people/{{item[0]}}">Редактировать экскурсовода</a></td>
+                            <td><a class="btn" href="/delete_duty/{{item[0]}}">Заплатить долг</a></td>
+                            <td><a class="btn" href="/people/{{item[0]}}">Подробнее</a></td>
                         </tr>
                     {% endfor %}
                 </tbody>

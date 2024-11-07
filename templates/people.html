@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Страница экскурсовода</h1>
+        <table class="table">
+                <thead>
+                    <tr>
+                      <th scope="col">Имя</th>
+                      <th scope="col">Карта Политеха</th>
+                      <th scope="col">Колличество экскурсий за всё время</th>
+                      <th scope="col">Колличество неоплаченных экскурсий</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        <tr>
+                            <td>
+                                {{people[1]}}
+                            </td>
+                            <td>
+                                {{people[2]}}
+                            </td>
+                            <td>
+                                {{people[3]}}
+                            </td>
+                            <td>
+                                {{people[4]}}
+                            </td>
+                            <td><a class="btn" href="/delete_people/{{people[0]}}">Удалить экскурсовода</a></td>
+                            <td><a class="btn" href="/edit_people/{{people[0]}}">Редактировать экскурсовода</a></td>
+                        </tr>
+                </tbody>
+        </table>
+    <h2> Посещения </h2>
+    <a class="btn" href="/add_visit/{{people[0]}}">Добавить</a>
+    <table class="table">
+                <thead>
+                    <tr>
+                      <th scope="col">Дата</th>
+                      <th scope="col">Время</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for visit in visits %}
+                        <tr>
+                            <td>
+                                {{visit[1]}}
+                            </td>
+                            <td>
+                                {{visit[2]}}
+                            </td>
+                            <td>
+                                <a class="btn" href="/delete_visit/{{visit[0]}}">Удалить</a>
+                            </td>
+                        </tr>
+                {% endfor %}
+                </tbody>
+        </table>
+
+
+{% endblock %}

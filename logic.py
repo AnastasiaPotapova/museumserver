@@ -4,7 +4,7 @@ from threading import Thread, Timer
 from datetime import datetime, timedelta
 import time
 import json
-from db import db, VisitModel, PollModel
+from db import db, VoteModel, EventModel
 from calend import update_event_from_calendar
 
 botTimeWeb = telebot.TeleBot('7148422286:AAGlA84bt50tlz2sOfciv4xfRka5hR5rJB4')
@@ -47,10 +47,10 @@ def set_visits(message):
     visits_thread_id = message.thread.id
 
 
-votes = []
 @botTimeWeb.poll_answer_handler()
 def handle_poll_answer(poll_answer):
-    nm = VisitModel(db.get_connection())
+    print(poll_answer)
+    nm = VoteModel(db.get_connection())
     user_id = poll_answer.user.id
     user_name = poll_answer.user.username
     option_ids = poll_answer.option_ids
@@ -59,45 +59,49 @@ def handle_poll_answer(poll_answer):
         vote = nm.get_vote(poll_answer.poll_id, i)
         nm.set_user(user_id, user_name, vote[0])
     data = nm.get_all()
+    print(data)
 
 
 def make_tg_poll(poll_ans):
-    poll = botTimeWeb.send_poll(chat_id, 'Экскурсии недели', [x[1] for x in poll_ans], False, allows_multiple_answers=True,
+    options = [x[1] for x in poll_ans]
+    options.append("Админы и Таня")
+    poll = botTimeWeb.send_poll(chat_id, 'Экскурсии недели', options, False, allows_multiple_answers=True,
                          message_thread_id=poll_thread_id)
-    nm = PollModel(db.get_connection())
-    nm.insert(poll.id)
-    nm = VisitModel(db.get_connection())
+    nm = VoteModel(db.get_connection())
     for i in range(len(poll_ans)):
         nm.insert(poll.poll.id, poll_ans[i][0], i)
+    print(nm.get_all())
 
 
-def print_all_votes():
-    for us in votes:
-        mention = "[@" + us[1] + "](tg://user?id=" + str(us[0]) + ")"
-        response = f"Hi, {mention}, "
-        botTimeWeb.send_message(chat_id, text=response, parse_mode="Markdown", message_thread_id=2)
+def make_remind(current_date):
+    remind_text = ""
+    current_date = current_date + " 20:00"
+    event_date = datetime.strptime(current_date, "%Y-%m-%d %H:%M") + timedelta(days=1)
+    nm = EventModel(db.get_connection())
+    event_data = nm.get_by_date(event_date.date())
+    nm = VoteModel(db.get_connection())
+    for event in event_data:
+        remind_text += str(event[3]) + ":\n"
+        visits_data = nm.get_by_event_id(event[0])
+        for us in visits_data:
+            mention = "[@" + us[6] + "](tg://user?id=" + str(us[3]) + ") \n"
+            remind_text += mention
+    botTimeWeb.send_message(chat_id, text=remind_text, parse_mode="Markdown", message_thread_id=remind_thread_id)
 
 
-def make_remind_data(current_date):
-    dt = current_date + " 20:00"
-    remind_date = datetime.strptime(dt, "%Y-%m-%d %H:%M") - timedelta(days=1)
-    pass
-
-
-def print_remind(target_date, target_time):
+def remind_thread():
     while True:
         current_time = datetime.now().strftime("%H:%M")
-        current_date = str(datetime.now().date())
-        if current_time == target_time and current_date == target_date:
-            print_all_votes()
+        if current_time == "20:00":
+            current_date = str(datetime.now().date())
+            make_remind(current_date)
         time.sleep(60)
 
 
 def check_poll_ans():
     pass
 
-
-#Thread(target=botTimeWeb.infinity_polling).start()
+Thread(target=botTimeWeb.infinity_polling).start()
 #reminder_time = "18:00"
 #check_ans_time = "23:59"
 #make_tg_poll([[0, '1'],[1, '2'],[2, '3']])

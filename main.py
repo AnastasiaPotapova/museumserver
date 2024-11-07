@@ -1,8 +1,9 @@
 from flask import Flask, render_template, redirect, request, jsonify
 from add_news import AddEventForm, AddPeopleForm, EditPeopleForm
-from db import PeopleModel, EventModel, db
+from db import PeopleModel, EventModel, db, VisitModel
 from calend import send_to_calendar, update_event_from_calendar
 from logic import make_tg_poll
+import datetime
 import json
 
 app = Flask(__name__)
@@ -21,8 +22,15 @@ app.config.update(dict(
 @app.route('/events')
 def events():
     events = EventModel(db.get_connection()).get_all()
+    data = []
+    now = datetime.datetime.now()
+    for event in events:
+        current_date = event[2] + " 20:00"
+        event_date = datetime.datetime.strptime(current_date, "%Y-%m-%d %H:%M")
+        if event_date > now:
+            data.append(event)
     return render_template('chain.html', type=1,
-                           data=events)
+                           data=data)
 
 
 @app.route('/delete_event/<int:event_id>', methods=['GET'])
@@ -74,6 +82,29 @@ def people():
     people = PeopleModel(db.get_connection()).get_all()
     return render_template('chain.html', type=2,
                            data=people)
+
+
+@app.route('/people/<int:people_id>')
+def people_page(people_id):
+    people = PeopleModel(db.get_connection()).get(people_id)
+    visits = VisitModel(db.get_connection()).get_by_user_id(people_id)
+    print(visits)
+    return render_template('people.html',
+                           people=people, visits=visits)
+
+
+@app.route('/add_visit/<int:people_id>')
+def add_visit(people_id):
+    now = datetime.datetime.now()
+    visits = VisitModel(db.get_connection()).insert(now.date(), now.ctime(), people_id)
+    return redirect(f"/people/{people_id}")
+
+
+@app.route('/delete_visit/<int:visit_id>', methods=['GET'])
+def delete_visit(visit_id):
+    people_id = VisitModel(db.get_connection()).get(visit_id)[3]
+    visit = VisitModel(db.get_connection()).delete(visit_id)
+    return redirect(f"/people/{people_id}")
 
 
 @app.route('/delete_people/<int:people_id>', methods=['GET'])
@@ -133,9 +164,12 @@ def edit_people(user_id):
 def check():
     rfid = request.data
     nm = PeopleModel(db.get_connection())
+    visit = VisitModel(db.get_connection())
     people = nm.getrfid(str(rfid))
     if people:
         nm.use_event(people[0])
+        now = datetime.datetime.now()
+        visit.insert(now.date(), now.ctime(), people[0])
     else:
         nm.insert(str(rfid))
     return jsonify({'task': 'good'}), 201
