@@ -59,6 +59,16 @@ class PeopleModel:
         row = cursor.fetchone()
         return row
 
+    def set_rfid(self, id, rfid):
+        cursor = self.connection.cursor()
+        cursor.execute('''
+                    UPDATE users
+                        SET rfid = ?
+                    WHERE id = ?;
+                ''', (rfid, id))
+        cursor.close()
+        self.connection.commit()
+
     def get_all(self):
         cursor = self.connection.cursor()
         cursor.execute("SELECT * FROM users")

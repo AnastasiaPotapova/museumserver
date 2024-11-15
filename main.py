@@ -165,17 +165,17 @@ def edit_people(user_id):
 
 @app.route('/check', methods=['POST'])
 def check():
-    rfid = request.data
+    rfid = str(request.data)[2:-1]
     nm = PeopleModel(db.get_connection())
     visit = VisitModel(db.get_connection())
-    people = nm.getrfid(str(rfid))
+    people = nm.getrfid(rfid)
     if people:
         nm.add_event(people[0])
         now = datetime.datetime.now()
         date = str(now.date())
         visit.insert(date[-2:]+"."+date[5:7], str(now.ctime())[11:16], people[0])
     else:
-        nm.insert(str(rfid))
+        nm.insert(rfid)
     return jsonify({'task': 'good'}), 201
 
 
@@ -195,9 +195,14 @@ def make_poll():
 
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
+def update_rfid():
+    pm = PeopleModel(db.get_connection())
+    dt = pm.get_all()
+    for p in dt:
+        pm.set_rfid(p[0], p[2][6:-1].lower())
 
 def run_server():
     app.run(port=5738, host='0.0.0.0')
 
-
+update_rfid()
 run_server()
