@@ -74,12 +74,23 @@ class PeopleModel:
         row = cursor.fetchone()
         return (True, row[0]) if row else (False,)
 
-    def use_event(self, user_id):
+    def add_event(self, user_id):
         cursor = self.connection.cursor()
         cursor.execute('''
             UPDATE users
                 SET number_events = number_events + 1,
                     duty = duty + 1
+            WHERE id = ?;
+        ''', (user_id,))
+        cursor.close()
+        self.connection.commit()
+
+    def dell_event(self, user_id):
+        cursor = self.connection.cursor()
+        cursor.execute('''
+            UPDATE users
+                SET number_events = number_events - 1,
+                    duty = duty - 1
             WHERE id = ?;
         ''', (user_id,))
         cursor.close()

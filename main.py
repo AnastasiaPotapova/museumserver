@@ -96,7 +96,9 @@ def people_page(people_id):
 @app.route('/add_visit/<int:people_id>')
 def add_visit(people_id):
     now = datetime.datetime.now()
-    visits = VisitModel(db.get_connection()).insert(now.date(), now.ctime(), people_id)
+    date = str(now.date())
+    visits = VisitModel(db.get_connection()).insert(date[-2:]+"."+date[5:7], str(now.ctime())[11:16], people_id)
+    PeopleModel(db.get_connection()).add_event(people_id)
     return redirect(f"/people/{people_id}")
 
 
@@ -104,6 +106,7 @@ def add_visit(people_id):
 def delete_visit(visit_id):
     people_id = VisitModel(db.get_connection()).get(visit_id)[3]
     visit = VisitModel(db.get_connection()).delete(visit_id)
+    PeopleModel(db.get_connection()).dell_event(people_id)
     return redirect(f"/people/{people_id}")
 
 
@@ -167,9 +170,10 @@ def check():
     visit = VisitModel(db.get_connection())
     people = nm.getrfid(str(rfid))
     if people:
-        nm.use_event(people[0])
+        nm.add_event(people[0])
         now = datetime.datetime.now()
-        visit.insert(now.date(), now.ctime(), people[0])
+        date = str(now.date())
+        visit.insert(date[-2:]+"."+date[5:7], str(now.ctime())[11:16], people[0])
     else:
         nm.insert(str(rfid))
     return jsonify({'task': 'good'}), 201
